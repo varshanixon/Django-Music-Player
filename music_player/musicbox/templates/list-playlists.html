@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block main_block%}
+{% load static %}
+
+<div class="container mt-4">
+    <div class="mb-4">
+        <h1 class="text-white">Playlists</h1>
+    </div>
+    <div class="row">
+        {% for playlist in playlists %}
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-primary border border-primary">
+                <!-- Playlist Cover Image -->
+                {% if playlist.cover_image %}
+                    <img src="{{ playlist.cover_image.url }}" class="card-img-top" alt="{{ playlist.name }}" style="width: 100%; height: 150px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'default/default_playlist_cover.jpg' %}" class="card-img-top" alt="Default Playlist Cover" style="width: 100%; height: 150px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ playlist.name }}</h5>
+                    <p class="card-text">
+                        <a href="{% url 'playlist-details' playlist.id %}" class="btn btn-primary">View Playlist</a>
+                        <a href="{% url 'playlist-delete' playlist.id %}" class="d-flex justify-content-end"><i class="fa-solid fa-trash"></i></a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+
+    <!-- Fontawsome -->
+    <script src="https://kit.fontawesome.com/363e20f2d3.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS cdn-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- style CSS -->
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body style="background-color: black;" data-page-type="{% block page_type %}default{% endblock %}">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark sticky-top ">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="fa-solid fa-music"></i></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" aria-current="page" href="{% url 'index' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" aria-current="page"
+                            href="{%  url 'playlist-list' %}">Playlists</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{% url 'playlist-create'%}" data-bs-toggle="modal"
+                            data-bs-target="#createPlaylistModal">Create Playlist</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            user
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if request.user.is_authenticated %}
+                            <li><a class="dropdown-item" href="{% url 'signout' %}">Logout</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'signin' %}">Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar ends here! -->
+
+    <!-- Modal Form to Create Playlist -->
+    <div class="modal fade" id="createPlaylistModal" tabindex="-1" aria-labelledby="CreatePlaylistModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-light">
+                <form action="{% url 'playlist-create' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="CreatePlaylistModalLabel">Create Playlist</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="playlist-name" class="form-label">Playlist Name</label>
+                            <input type="text" class="form-control create-playlist-input" name="name" id="playlist-name"
+                                placeholder="Playlist name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="playlist-cover-img" class="form-label">Cover Image</label>
+                            <input type="file" class="form-control create-playlist-input" name="cover_image"
+                                id="playlist-cover-img">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Visibility</label><br>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="visibility" id="visibility-private"
+                                    value="private" checked>
+                                <label for="visibility-private">Private</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="visibility" id="visibility-public"
+                                    value="public">
+                                <label for="visibility-public">Public</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Form ends here! -->
+
+    {% block main_block%}
+    {% endblock %}
+
+    <div style="height: 120px;"></div>
+    <!-- Music Player at the Bottom -->
+    <div id="player-box" class="fixed-bottom bg-black p-3 border border-primary d-flex justify-content-between d-none"
+        style="height: 100px;">
+        <!-- Display Currently Playing Song -->
+        <div id="now-playing" class="text-center my-auto">
+            <span id="now-playing-title" class="text-primary fw-bold">No song selected</span><br>
+            <a href="" id="now-playing-artist" class="text-primary-emphasis" style="text-decoration: none;"></a>
+        </div>
+        <div class="container px-5 mt-3">
+            <!-- Audio Player (No Default Controls) -->
+            <audio id="audio-player">
+                Your browser does not support the audio element.
+            </audio>
+
+            <!-- Progress Bar -->
+            <div class="progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                style="height: 4px; width: 100%;">
+                <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+            </div>
+
+
+            <div class="d-flex justify-content-between mt-2">
+                <!-- Current Time -->
+                <span id="current-time" class="text-light">0:00</span>
+
+                <!-- Controls -->
+                <div class="d-flex justify-content-center gap-3 mt-2">
+                    <button id="prev-btn" class="btn btn-outline-primary">
+                        <i class="fa-solid fa-backward-step"></i>
+                    </button>
+                    <button id="play-btn" class="btn btn-outline-primary">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button id="next-btn" class="btn btn-outline-primary">
+                        <i class="fa-solid fa-forward-step"></i>
+                    </button>
+                </div>
+
+                <!-- Duration -->
+                <span id="duration" class="text-white">0:00</span>
+            </div>
+
+
+        </div>
+        <!-- Volume -->
+        <div class="mt-3">
+            <div class="d-flex gap-2">
+                <div id="mute-btn">
+                    <i class="fa-solid fa-volume-high text-primary"></i>
+                </div>
+                <input type="range" id="volume-control" class="form-range" min="0" max="100" step="10" value="70"
+                    style="width: 80px;">
+            </div>
+        </div>
+    </div>
+    <!-- Music Player ends here! -->
+
+
+    <!-- JavaScript for the Music Player -->
+    <script src="{% static 'script.js' %}"></script>
+
+    <!-- Bootstrap js cdn -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+
+
+
+</body>
+
+</html>

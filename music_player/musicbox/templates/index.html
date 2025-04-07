@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block main_block%}
+{% load static %}
+<!-- Main Content -->
+<div class="container mt-4 text-white text-center">
+    {%if request.user.is_authenticated %}
+        <h1>Welcome {{request.user}}</h1>
+    {% else %}
+        <h1>Sign In to Music Player</h1>
+    {% endif %}
+</div>
+
+<!-- Song List -->
+<div class="container mt-3">
+    <h3 class="text-light">Songs</h3>
+    <div class="row">
+        {% for song in songs %}
+        <div class="col-md-3 mb-5">
+            <div class="card song-item" data-src="{{ song.audio_file.url }}" data-id="{{song.id}}" style="cursor: pointer;">
+                {% if song.cover_photo %}
+                <img src="{{song.cover_photo.url}}" alt="{{ song.title }}" style="height: 150px;width: 100%;">
+                {% elif song.album_object.cover_photo %}
+                <img src="{{ song.album_object.cover_photo.url }}" class="card-img-top" alt="{{ song.title }}" style="height: 150px;width: 100%;">
+                {% else %}
+                    <img src="{% static 'default/default_cover.jpg' %}" class="card-img-top" alt="Default Cover" style="height: 150px;width: 100%;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title" id="song-title">{{ song.title }}</h5>
+                    <p class="card-text" id="song-artist">{{ song.artist_object.name }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+ 
+{% endblock %}

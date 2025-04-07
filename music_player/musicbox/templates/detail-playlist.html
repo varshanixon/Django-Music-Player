@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block page_type %}playlist{% endblock %}
+{% block main_block%}
+{% load static %}
+<div class="container-fluid bg-dark mt-5 d-flex" id="playlist-header">
+    <div class="playlist-image position-relative">
+        {% if playlist.cover_image %}
+        <img src="{{playlist.cover_image.url}}" alt="Playlist cover image" class="playlist-cover">
+        {% else %}
+        <img src="{% static 'default/default_playlist_cover.jpg' %}" alt="default playlist cover image "
+            class="playlist-cover">
+        {% endif %}
+        <div class="position-absolute top-100 start-100 translate-middle">
+            <i class="fa-solid fa-play fa-5x text-primary" id="playlist-play-all"></i>
+        </div>
+    </div>
+    <div class="mx-auto my-auto">
+        <h1 class="text-white" id="playlist-heading">{{playlist.name}}</h1>
+    </div>
+    <div class="my-auto p-5">
+        <a href="{% url 'playlist-add-songs' playlist.id %}"><i class="fa-solid fa-plus fa-3x"></i></a>
+    </div>
+    <div class="text-white my-auto">
+        <p>{{playlist.songtrack_objects.count}} songs</p>
+        <p>{{playlist.visibility}} playlist</p>
+        <p>Owner: {{playlist.user_object.username}}</p>
+    </div>
+</div>
+<div class="container mt-5" id="playlist-body">
+    <table class="table table-dark table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Album</th>
+                <th scope="col">Artist</th>
+                <th scope="col">Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in playlist.songtrack_objects.all %}
+            <tr class="song-item" data-src="{{song.audio_file.url}}">
+                <th scope="row">{{forloop.counter}}</th>
+                <td id="song-title">{{song.title}}</td>
+                <td><a href="" style="color: white;text-decoration: none;">{{song.album_object.title}}</a></td>
+                <td><a href="" id="song-artist" style="color: white;text-decoration: none">{{song.artist_object.name}}</a></td>
+                <td>{{song.duration}}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}
