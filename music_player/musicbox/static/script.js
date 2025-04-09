@@ -80,9 +80,9 @@ prevBtn.addEventListener('click',function(){
 
 
 // Volume Control
-volumeControl.addEventListener('input',function(){
-    audioPlayer.volume = 
-})
+// volumeControl.addEventListener('input',function(){
+//     audioPlayer.volume = 
+// })
 
 
 // Update progress bar as the song plays

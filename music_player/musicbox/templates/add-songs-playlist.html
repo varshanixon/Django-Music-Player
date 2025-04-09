@@ -5,12 +5,35 @@
     <h2 class="text-white mb-4">Add Songs to {{playlist.name}} playlist</h2>
     <form action="" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary mb-3">Add Songs</button>
-        {% for song in form %}
-            <ul>
-                <li>{{song}}-{{song.artist_object.name}}</li>
-            </ul>
-        {% endfor %}
+        <div class="">
+            <button type="submit" class="btn btn-primary mb-3">Add Songs</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Album</th>
+                        <th>Artist</th>
+                        <th>Add</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% for song in form.songs.field.queryset %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{song.title}}</td>
+                        <td>{{song.album_object.title}}</td>
+                        <td>{{song.artist_object.name}}</td>
+                        <td>
+                            <input type="checkbox" name="songs" value="{{song.id}}">
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </form>
 </div>
 {% endblock %}
