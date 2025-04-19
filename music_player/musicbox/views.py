@@ -17,7 +17,7 @@ from musicbox.forms import (
     SignInForm,
     SignUpForm,
 )
-from musicbox.models import Playlist, SongTrack, User
+from musicbox.models import Playlist, SongTrack, User, LikedSong
 
 # Create your views here.
 
@@ -92,13 +92,12 @@ class OtpVerifyView(View):
             user_object.is_verified = True
             user_object.otp = None
             user_object.save()
-
-            messages.success(request, "OTP verified successfully!")
-            return redirect("signin")
+            return redirect('signin')
 
         except:
-            messages.error(request, "Verification failed. Please try again.")
+            messages.error(request, "Verification failed. Please try again.",extra_tags='otp')
             return redirect("otp-verify")
+        
 
 
 class SignInView(View):
@@ -139,7 +138,7 @@ class IndexView(View):
     def get(self, request, *args, **kwargs):
         songs = SongTrack.objects.all()
         return render(request, self.template_name, {"songs": songs})
-
+    
 
 class PlaylistCreateView(LoginRequiredMixin, View):
     login_url = "signin"
@@ -203,6 +202,23 @@ class PlaylistAddSongsView(LoginRequiredMixin, View):
         )
 
 
+class PlaylistDeleteSongView(LoginRequiredMixin,View):
+    login_url = 'signin'
+    redirect_field_name = "redirect_to"
+
+    def get(self,request,*args,**kwargs):
+        playlist_id = kwargs.get('playlist_pk')
+        song_id = kwargs.get('song_pk')
+
+        playlist = get_object_or_404(Playlist,id=playlist_id,user_object=request.user)
+
+        song = get_object_or_404(SongTrack,id=song_id)
+
+        playlist.songtrack_objects.remove(song)
+
+        return redirect('playlist-details',pk=playlist_id)
+
+
 class PlaylistDetailView(LoginRequiredMixin, View):
     login_url = "signin"
     redirect_field_name = "redirect_to"
@@ -214,9 +230,6 @@ class PlaylistDetailView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"playlist": playlist})
 
 
-# class RemoveSongsFromPlaylistView(View):
-
-
 class PlaylistListView(LoginRequiredMixin, View):
     login_url = "signin"
     redirect_field_name = "redirect_to"
@@ -225,3 +238,4 @@ class PlaylistListView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         playlists = Playlist.objects.filter(user_object=request.user)
         return render(request, self.template_name, {"playlists": playlists})
+

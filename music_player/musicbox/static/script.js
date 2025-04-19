@@ -80,10 +80,36 @@ prevBtn.addEventListener('click',function(){
 
 
 // Volume Control
-// volumeControl.addEventListener('input',function(){
-//     audioPlayer.volume = 
-// })
+volumeControl.addEventListener('input',function(){
+    audioPlayer.volume = this.value;
 
+    // Update mute button icon
+    if(audioPlayer.volume == 0){
+        muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark text-primary"></i>'
+    }
+    else if(audioPlayer.volume > 0 && audioPlayer.volume <= 0.5){
+        muteBtn.innerHTML = '<i class="fa-solid fa-volume-low text-primary"></i>'
+    }
+    else{
+        muteBtn.innerHTML = '<i class="fa-solid fa-volume-high text-primary"></i>'
+    }
+})
+
+// Mute button functionality
+muteBtn.addEventListener('click',function(){
+    if(audioPlayer.volume > 0){
+        audioPlayer.dataset.previousVolume = audioPlayer.volume;
+        audioPlayer.volume = 0;
+        volumeControl.value = 0;
+        muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark text-primary"></i>';
+    }
+    else{
+        const previousVolume = audioPlayer.dataset.previousVolume || 0.5;
+        audioPlayer.volume = previousVolume;
+        volumeControl.value = previousVolume;
+        muteBtn.innerHTML = '<i class="fa-solid fa-volume-high text-primary"></i>';
+    }
+});
 
 // Update progress bar as the song plays
 audioPlayer.addEventListener('timeupdate',function(){
@@ -113,6 +139,10 @@ document.addEventListener('DOMContentLoaded',function(){
     // To play a song
     songItem = document.querySelectorAll('.song-item');
     
+    // To set volume
+    audioPlayer.volume = 0.5;
+    muteBtn.innerHTML = '<i class="fa-solid fa-volume-low text-primary"></i>'
+
     // To load pagetype
     const pageType = document.body.dataset.pageType;
 

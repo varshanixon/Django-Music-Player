@@ -35,6 +35,7 @@
                 <th scope="col">Album</th>
                 <th scope="col">Artist</th>
                 <th scope="col">Duration</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +44,11 @@
                 <th scope="row">{{forloop.counter}}</th>
                 <td id="song-title">{{song.title}}</td>
                 <td><a href="" style="color: white;text-decoration: none;">{{song.album_object.title}}</a></td>
-                <td><a href="" id="song-artist" style="color: white;text-decoration: none">{{song.artist_object.name}}</a></td>
+                <td><a href="" id="song-artist"
+                        style="color: white;text-decoration: none">{{song.artist_object.name}}</a></td>
                 <td>{{song.duration}}</td>
+                <td><a href="{% url 'playlist-delete-song' playlist_pk=playlist.id song_pk=song.id %}"><i
+                            class="fa-solid fa-trash"></i></a></td>
             </tr>
             {% endfor %}
 

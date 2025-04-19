@@ -1,4 +1,15 @@
 {% extends 'base.html' %}
+{% block head_block %}
+{% load static %}
+<style>
+    .song-select-btn.selected {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+<script src="{% static 'add-songs.js' %}"></script>
+{% endblock %}
+
 {% block main_block%}
 {% load static %}
 <div class="container mt-5">
@@ -27,7 +38,9 @@
                         <td>{{song.album_object.title}}</td>
                         <td>{{song.artist_object.name}}</td>
                         <td>
-                            <input type="checkbox" name="songs" value="{{song.id}}">
+                            <button type="button" class="btn btn-outline-primary song-select-btn"
+                                data-song-id="{{song.id}}">Select</button>
+                            <input type="checkbox" name="songs" value="{{song.id}}" class="song-checkbox d-none">
                         </td>
                     </tr>
                     {% endfor %}

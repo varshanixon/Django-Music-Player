@@ -16,6 +16,9 @@
 
     <!-- style CSS -->
     <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    {% block head_block %}
+    {% endblock %}
 </head>
 
 <body style="background-color: black;" data-page-type="{% block page_type %}default{% endblock %}">
@@ -160,9 +163,9 @@
         <div class="mt-3">
             <div class="d-flex gap-2">
                 <div id="mute-btn">
-                    <i class="fa-solid fa-volume-high text-primary"></i>
+                    <i class="fa-solid fa-volume text-primary"></i>
                 </div>
-                <input type="range" id="volume-control" class="form-range" min="0" max="100" step="10" value="70"
+                <input type="range" id="volume-control" class="form-range" min="0" max="1" step="0.1" value="0.5"
                     style="width: 80px;">
             </div>
         </div>

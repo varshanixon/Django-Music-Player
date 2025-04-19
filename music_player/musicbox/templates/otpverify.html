@@ -25,7 +25,9 @@
                 {%if messages%}
                 <div class="text-red-500">
                     {%for m in messages%}
-                        <p>{{m}}</p>
+                        {% if 'otp' in m.extra_tags %}
+                            <p>{{m}}</p>
+                        {% endif %}
                     {%endfor%}
                 </div>
                 {%endif%}

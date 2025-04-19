@@ -6,6 +6,7 @@
     <div class="mb-4">
         <h1 class="text-white">Playlists</h1>
     </div>
+    {% if playlists %}
     <div class="row">
         {% for playlist in playlists %}
         <div class="col-md-4 mb-4">
@@ -27,6 +28,11 @@
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="mt-5 text-secondary">
+        <p>You haven't created any playlists.</p>
+    </div>
+    {% endif %}
 </div>
 
 {% endblock %}

@@ -37,6 +37,11 @@ urlpatterns = [
         views.PlaylistAddSongsView.as_view(),
         name="playlist-add-songs",
     ),
+    path(
+        "playlist/<int:playlist_pk>/delete-song/<int:song_pk>/",
+        views.PlaylistDeleteSongView.as_view(),
+        name="playlist-delete-song",
+    ),
     path("playlist/list/", views.PlaylistListView.as_view(), name="playlist-list"),
     path(
         "playlist/<int:pk>/detail/",
